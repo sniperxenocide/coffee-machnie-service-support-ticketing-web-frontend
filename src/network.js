@@ -30,7 +30,9 @@ class Network{
 
     onError(error){
         console.log(error);
-        alert(error.toString());
+        if(error.response.data['error'].toString()==='Unauthorized')
+            window.location.pathname = '/' ;
+        else alert(error.toString());
         return false
     }
 

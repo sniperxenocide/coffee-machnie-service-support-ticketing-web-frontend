@@ -3,10 +3,7 @@ import React, { Component } from 'react'
 class Footer extends Component {
     constructor(props) {
         super(props)
-
-        this.state = {
-
-        }
+        this.state = {}
     }
 
     render() {
@@ -15,6 +12,7 @@ class Footer extends Component {
                 <footer className = "footer">
                     <span className="text-muted">All Rights Reserved@Department of IT-AKG</span>
                 </footer>
+                <label> </label>
             </div>
         )
     }
