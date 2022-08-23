@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import "./Login.css";
+import "./css/Login.css";
 import Network from "../network";
 
 export default function Login() {
@@ -18,10 +18,16 @@ export default function Login() {
             .then(data=>{
                 if(data && data.token){
                     sessionStorage.setItem("user", JSON.stringify(data));
-                    window.location.pathname = '/tickets';
+                    window.location.pathname = '/dashboard';
                 }
             });
     }
+
+    useEffect(() => {
+        if(window.location.pathname==='/login')
+            document.getElementById('nav_bar').style.display='none';
+        else document.getElementById('nav_bar').style.display='block';
+    }, []);
 
     return (
         <div className="Login">

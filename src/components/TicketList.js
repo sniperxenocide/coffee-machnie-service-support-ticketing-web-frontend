@@ -20,7 +20,7 @@ class TicketList extends Component{
         this.state = {
             tickets:[], currentPage:1, totalPages:1, pageSize:10,recordCount:1,
             shopCode:'', msoPhone:'',ticketNumber:'',machineNumber:'',status:'',
-            statusList:[{'id':'%','name':'All'}], statusId:'%',
+            statusList:[{'id':'%','status':'All'}], statusId:'%',
             statusTagList:[{'statusTag':'%','tagDescription':'All'}],statusTag:'%',
             dialogOpen:false,selectedTicketIdx:1,
             searchBoxVisible:false
@@ -45,10 +45,25 @@ class TicketList extends Component{
                 tickets:data['data']['tickets'],
                 currentPage:data['data']['pageIndex'], totalPages:data['data']['totalPages'],
                 pageSize:data['data']['pageSize'], recordCount:data['data']['recordCount'],
-                statusList:[{'id':'%','name':'All'},...data['data']['statusList']],
+                statusList:[{'id':'%','status':'All'},...data['data']['statusList']],
                 statusTagList:[{'statusTag':'%','tagDescription':'All'},...data['data']['statusTagList']]
             })
         })
+    }
+
+    getTimeDif(totalMin,firstLimit,secondLimit){
+        let color='green';
+        if(totalMin===null) return '---'
+        if(totalMin>firstLimit) color='blue';
+        if(totalMin>secondLimit) color='red';
+        let text = '';
+        let d=0,hr=0,min=totalMin;
+        hr=Math.floor(min/60);
+        min=min%60;
+        d=Math.floor(hr/24);
+        hr=hr%24;
+        text = (d>0?d+'d':'')+' '+(hr>0?hr+'h':'')+' '+min+'m';
+        return <b style={{color:color}}>{text}</b>;
     }
 
     handleDialogClose=()=>{
@@ -84,7 +99,7 @@ class TicketList extends Component{
                                 variant="standard" SelectProps={{native: true,}}>
                                 {this.state.statusTagList.map((st) => (
                                     <option key={st.statusTag} value={st.statusTag}>
-                                        {st.tagDescription}
+                                        {st.tagDescription+(st['ticketCount']?' ('+st['ticketCount']+')':'')}
                                     </option>
                                 ))}
                             </TextField>
@@ -99,7 +114,7 @@ class TicketList extends Component{
                             >
                                 {this.state.statusList.map((s) => (
                                     <option key={s.id} value={s.id}>
-                                        {s.name}
+                                        {s.status+(s['ticketCount']?' ('+s['ticketCount']+')':'')}
                                     </option>
                                 ))}
                             </TextField>
@@ -177,15 +192,18 @@ class TicketList extends Component{
                         </colgroup>
                         <thead className= "text-center text-nowrap" style={{background:'#e6f7ee',position:'sticky',top:0,zIndex:1}}>
                             <tr >
-                                <th style={{background:'#f5b453'}} colSpan={4}>Ticket Raiser</th>
-                                <th style={{background:'#889df2'}} colSpan={3}>Ticket Info</th>
+                                <th style={{background:'#f5b453'}} colSpan={3}>Ticket Raiser</th>
+                                <th style={{background:'#889df2'}} colSpan={4}>Ticket Info</th>
                                 <th style={{background:'#95baa6'}} colSpan={3}>Ticket Resolver</th>
                             </tr>
                             <tr >
-                                <th> SL</th><th> Shop</th><th> Location</th><th> Machine</th>
-                                <th> Ticket</th><th> Current Status</th><th> Time</th><th> MSO</th>
+                                <th> SL</th><th className="col-lg-2"> Shop</th><th className="col-lg-1"> Machine</th>
+                                <th className="col-lg-1"> Ticket</th><th className="col-lg-2"> Current Status</th>
+                                <th >Creation Time</th><th className="col-lg-2">Lead Time</th>
+                                <th className="col-lg-2"> MSO</th>
                             </tr>
                         </thead>
+                        {/*className="col-lg-2"*/}
                         <tbody>
                         {
                             this.state.tickets.map(
@@ -196,47 +214,23 @@ class TicketList extends Component{
                                     }} key = {ticket.id}>
                                         <td>{(this.state.currentPage-1)*this.state.pageSize+idx+1}</td>
                                         <td>
-                                            <div className="row"><label><b>Name:</b></label></div>
-                                            <div className="row"><label>{ ticket['shopName']}</label></div>
-                                            <div className="row"><label><b>MIS Code:</b></label></div>
-                                            <div className="row"><label>{ ticket['shopMisCode']}</label></div>
-                                            <div className="row"><label><b>Owner:</b></label></div>
-                                            <div className="row"><label>{ ticket['shopOwner']}</label></div>
-                                            <div className="row"><label><b>Phone:</b></label></div>
-                                            <div className="row"><label>{ ticket['shopPhone']}</label></div>
+                                            { ticket['shopName']+' ('+ticket['shopMisCode']+')'}
                                         </td>
                                         <td>
-                                            <div className="row"><label><b>Division:</b> &nbsp;&nbsp;{ticket['division']}</label></div>
-                                            <div className="row"><label><b>Region:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ticket['region']}</label></div>
-                                            <div className="row"><label><b>Territory:</b>&nbsp;&nbsp;{ticket['territory']}</label></div>
-                                            <div className="row"><label><b>Address:</b></label></div>
-                                            <div className="row"><label>{ ticket['shopAddress']}</label></div>
+                                            { ticket['machineBrand']+'-'+ticket['machineModel']+'-'+ticket['machineNumber']}
                                         </td>
-                                        <td>
-                                            <div className="row"><label><b>Brand:</b></label></div>
-                                            <div className="row"><label>{ ticket['machineBrand']}</label></div>
-                                            <div className="row"><label><b>Model:</b></label></div>
-                                            <div className="row"><label>{ ticket['machineModel']}</label></div>
-                                            <div className="row"><label><b>Serial:</b></label></div>
-                                            <div className="row"><label>{ ticket['machineNumber']}</label></div>
-                                        </td>
-                                        <td className="text-nowrap" > { ticket['issueToken']+' ('+ticket['issueType']+')'} </td>
+                                        <td> { ticket['issueToken']+' ('+ticket['issueType']+')'} </td>
                                         <td> {ticket['currentStatus']['name']}</td>
-                                        <td className="text-nowrap">
-                                            <div className="row"><label><b>Creation Time:</b></label></div>
-                                            <div className="row"><label>{ moment(ticket['issueDate']).format('D-MMM-YYYY h:mm a')}</label></div>
-                                            <div className="row"><label><b>Response Time:</b></label></div>
-                                            <div className="row"><label>{ ticket['responseTime']==null?'---':moment(ticket['responseTime']).format('D-MMM-YYYY h:mm a')}</label></div>
-                                            <div className="row"><label><b>Resolution Time:</b></label></div>
-                                            <div className="row"><label>{ ticket['resolutionTime']==null?'---': moment(ticket['resolutionTime']).format('D-MMM-YYYY h:mm a')}</label></div>
-                                            <div className="row"><label><b>Closing Time:</b></label></div>
-                                            <div className="row"><label>{ ticket['closingTime']==null?'---': moment(ticket['closingTime']).format('D-MMM-YYYY h:mm a')}</label></div>
+                                        <td>
+                                            { moment(ticket['issueDate']).format('D-MMM-YYYY h:mm a')}
                                         </td>
                                         <td>
-                                            <div className="row"><label><b>Name:</b></label></div>
-                                            <div className="row"><label>{ ticket['currentMsoName']}</label></div>
-                                            <div className="row"><label><b>Phone:</b></label></div>
-                                            <div className="row"><label>{ ticket['currentMsoPhone']}</label></div>
+                                            <div className="row"><label>Response: {this.getTimeDif(ticket['creationToResponseTimeMin'],10,1440)}</label></div>
+                                            <div className="row"><label>Resolution: {this.getTimeDif(ticket['responseToResolutionTimeMin'],720,2880)}</label></div>
+                                            <div className="row"><label>Closing: {this.getTimeDif(ticket['resolutionToClosingTimeMin'],60,1440)}</label></div>
+                                        </td>
+                                        <td>
+                                            { ticket['currentMsoName']+' ('+ticket['currentMsoPhone']+')'}
                                         </td>
                                     </tr>
                             )

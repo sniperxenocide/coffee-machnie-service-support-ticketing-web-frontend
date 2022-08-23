@@ -5,16 +5,84 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SendIcon from "@mui/icons-material/Send";
 import Box from '@mui/material/Box';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 class TicketDetail extends Component {
     constructor(props) {
         super(props);
+        let nextStatusList = props.ticket['nextStatusList'];
         this.state={
             ticket:props.ticket,
-            statusIndex:0,
-            dataFields:props.ticket['nextStatusList'].length>0?props.ticket['nextStatusList'][0]['dataFields']:[]
+            nextStatusIndex:0,
+            dataFields:nextStatusList.length>0?nextStatusList[0]['dataFields']:[],
+            nextStatusId:nextStatusList.length>0?nextStatusList[0].id:-1,
+            dataList:nextStatusList.length>0?nextStatusList[0]['dataFields'].map(
+                df=>{return {'fieldId':df['id'],'fieldData':''}}
+            ):[],
+            alert:{
+                severity:'success',
+                show:false,
+                title:'Success',
+                msg:'Status Submitted Successfully'
+            },
+            submitButtonDisabled:false
         }
+        console.log('Initial State: ');
+        console.log(this.state);
     }
+
+    showAlertMsg=(status,msg,redirect=false)=>{
+        let tmpAlert = this.state.alert;
+        if(status)
+            tmpAlert={severity:'success',show:true, title:'Success', msg:'Status Submitted Successfully'};
+        else
+            tmpAlert={severity:'error',show:true, title:'Error', msg:msg};
+        this.setState({alert:tmpAlert},()=>{
+            setTimeout(()=>{
+                this.setState({alert:{severity:'success',show:false, title:'', msg:''}});
+                if(redirect) window.location.pathname = '/tickets';
+            },3000);
+        });
+    }
+
+    submitNextStatus=(e,ticket)=>{
+        console.log('On Status Submit');
+        let postBody={
+            'issueId':ticket.id,
+            'nextStatusId':this.state.nextStatusId,
+            'dataList':this.state.dataList
+        }
+        let postAllowed=true;
+        postBody.dataList.forEach(l=>{
+            if(l.fieldData.trim().length===0){
+                this.showAlertMsg(false,'Data Field Can not be Empty');
+                postAllowed=false;
+            }
+        })
+        console.log(postBody);
+        if(!postAllowed) return;
+        this.setState({submitButtonDisabled:true});
+        Network.post('/api/v1/issue/status/next',postBody)
+            .then((res)=>{
+                if(!res.status) this.setState({submitButtonDisabled:false});
+                this.showAlertMsg(res.status,res.msg,res.status);
+            })
+    }
+
+    onStatusChanged = (e,ticket)=> {
+        let idx = e.target.value;
+        this.setState({
+            nextStatusIndex:idx,
+            dataFields:ticket['nextStatusList'][idx]['dataFields'],
+            nextStatusId:ticket['nextStatusList'][idx].id,
+            dataList:ticket['nextStatusList'][idx]['dataFields'].map(
+                df=>{return {'fieldId':df['id'],'fieldData':''}}
+            )
+        },()=>{
+            console.log('On Status Change:')
+            console.log(this.state)
+        })}
 
     render() {
         let ticket = this.state.ticket;
@@ -101,17 +169,25 @@ class TicketDetail extends Component {
               {
                   ticket['nextStatusList'].length>0?
                       <Box sx={{ border:'1px solid grey',borderRadius:'5px',margin:'10px 0px',padding:'10px' }}><div>
+                          {
+                              this.state.alert.show?
+                                  <div>
+                                      <Alert severity={this.state.alert.severity}>
+                                          <AlertTitle>{this.state.alert.title}</AlertTitle>
+                                          {this.state.alert.msg}
+                                      </Alert>
+                                      <label> </label>
+                                  </div>:''
+                          }
                           <div className="row"><label><b>Next Status</b></label></div>
                           <div className="row">
                               <div className="col-lg-3 p-3">
                                   <TextField
                                       id="select-status"
                                       select fullWidth label="Status"
-                                      value={this.state.statusIndex}
-                                      onChange={(e) => {this.setState({statusIndex:e.target.value,
-                                          dataFields:ticket['nextStatusList'][e.target.value]['dataFields']})}}
-                                      variant="standard" SelectProps={{native: true,}}
-                                  >
+                                      value={this.state.nextStatusIndex}
+                                      onChange={(e) => this.onStatusChanged(e,ticket)}
+                                      variant="standard" SelectProps={{native: true,}}>
                                       {this.state.ticket['nextStatusList'].map((s,idx) => (
                                           <option key={s.id} value={idx}>
                                               {s.name}
@@ -126,8 +202,12 @@ class TicketDetail extends Component {
                                           (df,idx)=>
                                               <div className="row" key={df.id}>
                                                   <TextField id="status_data" label={df['name']} variant="standard" fullWidth
-                                                             // onChange={(e) => {this.setState({statusData:e.target.value})}}
-                                                             // value={this.state.ticketNumber}
+                                                             value={this.state.dataList[idx]['fieldData']}
+                                                      onChange={(e) => {
+                                                          let tmpDataList = this.state.dataList;
+                                                          tmpDataList[idx]['fieldData'] = e.target.value;
+                                                          this.setState({dataList:tmpDataList})
+                                                      }}
                                                   />
                                               </div>
                                       )
@@ -135,11 +215,9 @@ class TicketDetail extends Component {
                               </div>
                               <div className="col-lg-1 p-3"> </div>
                               <div className="col-lg-2 p-3">
-                                  <Button fullWidth onClick={(e)=>{
-                                      // this.setState({currentPage:1},()=>{
-                                      //     this.componentDidMount();
-                                      // });
-                                  }} variant="contained" endIcon={<SendIcon />}>
+                                  <Button fullWidth disabled={this.state.submitButtonDisabled}
+                                          onClick={(e)=>this.submitNextStatus(e,ticket)}
+                                          variant="contained" endIcon={<SendIcon />}>
                                       Submit
                                   </Button>
                               </div>

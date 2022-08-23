@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
+import NavBar from "./NavBar";
 
 class Header extends Component {
     constructor(props) {
         super(props)
-
         this.state = {
 
         }
@@ -17,10 +17,11 @@ class Header extends Component {
                         <div className="col-lg-1">
                             <div className="row">
                                 <div className="col-lg-6"><img style={{height:'40px',width:'40px'}} src={process.env.PUBLIC_URL+'/akg_logo.png'}/></div>
-                                <div className="col-lg-6"><a className="navbar-brand">সেবা</a></div>
+                                <div className="col-lg-6"><label className="navbar-brand"><b>সেবা</b></label></div>
                             </div>
                         </div>
-                        <div className="col-lg-11"> </div>
+                        <div className="col-lg-8"> </div>
+                        <div id="nav_bar" className="col-lg-3"><NavBar/></div>
                     </div>
                 </header>
             </div>
