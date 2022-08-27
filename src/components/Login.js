@@ -24,7 +24,7 @@ export default function Login() {
     }
 
     useEffect(() => {
-        if(window.location.pathname==='/login')
+        if(window.location.pathname==='/login' || window.location.pathname==='/')
             document.getElementById('nav_bar').style.display='none';
         else document.getElementById('nav_bar').style.display='block';
     }, []);

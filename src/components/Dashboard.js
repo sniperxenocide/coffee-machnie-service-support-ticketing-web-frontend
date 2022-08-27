@@ -2,8 +2,6 @@ import React,{ Component } from 'react';
 import Network from "../network";
 import { Chart } from "react-google-charts";
 
-const colors = ["#f8bd19","#33ccff","#ffcccc","#ccff66"];
-
 export default class Dashboard extends Component{
     constructor(props) {
         super(props);
@@ -32,12 +30,10 @@ export default class Dashboard extends Component{
     }
 
     render() {
-
-
         return(
             <div>
                 <label> </label>
-                <h2 className="text-center">Analytics Dashboard</h2>
+                <h2 className="text-center">Service Performance Analysis</h2>
                 <label> </label>
                 <div className='container'>
                     <div className="row">

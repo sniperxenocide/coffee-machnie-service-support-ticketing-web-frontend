@@ -88,6 +88,64 @@ class TicketDetail extends Component {
         let ticket = this.state.ticket;
         return(
           <div>
+              {
+                  ticket['nextStatusList'].length>0?
+                      <Box sx={{ border:'1px solid grey',borderRadius:'5px',margin:'10px 0px',padding:'10px' }}><div>
+                          {
+                              this.state.alert.show?
+                                  <div>
+                                      <Alert severity={this.state.alert.severity}>
+                                          <AlertTitle>{this.state.alert.title}</AlertTitle>
+                                          {this.state.alert.msg}
+                                      </Alert>
+                                      <label> </label>
+                                  </div>:''
+                          }
+                          <div className="row"><label><b>Next Status</b></label></div>
+                          <div className="row">
+                              <div className="col-lg-3 p-3">
+                                  <TextField
+                                      id="select-status"
+                                      select fullWidth label="Status"
+                                      value={this.state.nextStatusIndex}
+                                      onChange={(e) => this.onStatusChanged(e,ticket)}
+                                      variant="standard" SelectProps={{native: true,}}>
+                                      {this.state.ticket['nextStatusList'].map((s,idx) => (
+                                          <option key={s.id} value={idx}>
+                                              {s.name}
+                                          </option>
+                                      ))}
+                                  </TextField>
+                              </div>
+                              <div className="col-lg-1 p-3"> </div>
+                              <div className="col-lg-4 p-3">
+                                  {
+                                      this.state.dataFields.map(
+                                          (df,idx)=>
+                                              <div className="row" key={df.id}>
+                                                  <TextField id="status_data" label={df['name']} variant="standard" fullWidth
+                                                             value={this.state.dataList[idx]['fieldData']}
+                                                             onChange={(e) => {
+                                                                 let tmpDataList = this.state.dataList;
+                                                                 tmpDataList[idx]['fieldData'] = e.target.value;
+                                                                 this.setState({dataList:tmpDataList})
+                                                             }}
+                                                  />
+                                              </div>
+                                      )
+                                  }
+                              </div>
+                              <div className="col-lg-1 p-3"> </div>
+                              <div className="col-lg-2 p-3">
+                                  <Button fullWidth disabled={this.state.submitButtonDisabled}
+                                          onClick={(e)=>this.submitNextStatus(e,ticket)}
+                                          variant="contained" endIcon={<SendIcon />}>
+                                      Submit
+                                  </Button>
+                              </div>
+                          </div>
+                      </div></Box> :''
+              }
               <div className="row">
                   <table style={{verticalAlign:'middle'}} className = "table table-striped table-bordered">
                       <colgroup>
@@ -97,9 +155,9 @@ class TicketDetail extends Component {
                       </colgroup>
                       <thead className= "text-center text-nowrap" >
                           <tr >
-                              <th className="col-lg-6" style={{background:'#f5b453'}}> Shop</th>
+                              <th className="col-lg-5" style={{background:'#f5b453'}}> Shop</th>
                               <th className="col-lg-2" style={{background:'#f5b453'}}> Machine</th>
-                              <th className="col-lg-2" style={{background:'#889df2'}}> Ticket</th>
+                              <th className="col-lg-3" style={{background:'#889df2'}}> Ticket</th>
                               <th className="col-lg-2" style={{background:'#95baa6'}}> MSO</th>
                           </tr>
                       </thead>
@@ -166,64 +224,6 @@ class TicketDetail extends Component {
                       </tbody>
                   </table>
               </div>
-              {
-                  ticket['nextStatusList'].length>0?
-                      <Box sx={{ border:'1px solid grey',borderRadius:'5px',margin:'10px 0px',padding:'10px' }}><div>
-                          {
-                              this.state.alert.show?
-                                  <div>
-                                      <Alert severity={this.state.alert.severity}>
-                                          <AlertTitle>{this.state.alert.title}</AlertTitle>
-                                          {this.state.alert.msg}
-                                      </Alert>
-                                      <label> </label>
-                                  </div>:''
-                          }
-                          <div className="row"><label><b>Next Status</b></label></div>
-                          <div className="row">
-                              <div className="col-lg-3 p-3">
-                                  <TextField
-                                      id="select-status"
-                                      select fullWidth label="Status"
-                                      value={this.state.nextStatusIndex}
-                                      onChange={(e) => this.onStatusChanged(e,ticket)}
-                                      variant="standard" SelectProps={{native: true,}}>
-                                      {this.state.ticket['nextStatusList'].map((s,idx) => (
-                                          <option key={s.id} value={idx}>
-                                              {s.name}
-                                          </option>
-                                      ))}
-                                  </TextField>
-                              </div>
-                              <div className="col-lg-1 p-3"> </div>
-                              <div className="col-lg-4 p-3">
-                                  {
-                                      this.state.dataFields.map(
-                                          (df,idx)=>
-                                              <div className="row" key={df.id}>
-                                                  <TextField id="status_data" label={df['name']} variant="standard" fullWidth
-                                                             value={this.state.dataList[idx]['fieldData']}
-                                                      onChange={(e) => {
-                                                          let tmpDataList = this.state.dataList;
-                                                          tmpDataList[idx]['fieldData'] = e.target.value;
-                                                          this.setState({dataList:tmpDataList})
-                                                      }}
-                                                  />
-                                              </div>
-                                      )
-                                  }
-                              </div>
-                              <div className="col-lg-1 p-3"> </div>
-                              <div className="col-lg-2 p-3">
-                                  <Button fullWidth disabled={this.state.submitButtonDisabled}
-                                          onClick={(e)=>this.submitNextStatus(e,ticket)}
-                                          variant="contained" endIcon={<SendIcon />}>
-                                      Submit
-                                  </Button>
-                              </div>
-                          </div>
-                      </div></Box> :''
-              }
 
               <div className="row"><label><b>Ticket History</b></label></div>
               <div className="row">

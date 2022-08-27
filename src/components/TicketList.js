@@ -14,12 +14,12 @@ import Box from "@mui/material/Box";
 import FilterIcon from '@mui/icons-material/FilterList';
 
 class TicketList extends Component{
-
     constructor(props) {
         super(props);
         this.state = {
             tickets:[], currentPage:1, totalPages:1, pageSize:10,recordCount:1,
             shopCode:'', msoPhone:'',ticketNumber:'',machineNumber:'',status:'',
+            startDate:'',endDate:'',
             statusList:[{'id':'%','status':'All'}], statusId:'%',
             statusTagList:[{'statusTag':'%','tagDescription':'All'}],statusTag:'%',
             dialogOpen:false,selectedTicketIdx:1,
@@ -36,6 +36,8 @@ class TicketList extends Component{
         if(this.state.ticketNumber.trim().length>0) url+="&ticketNumber="+this.state.ticketNumber.trim();
         if(this.state.statusId!=='%') url+="&statusId="+this.state.statusId;
         if(this.state.statusTag!=='%') url+="&statusTag="+this.state.statusTag;
+        if(this.state.startDate.trim().length>0) url+="&startDate="+this.state.startDate;
+        if(this.state.endDate.trim().length>0) url+="&endDate="+this.state.endDate;
         return url;
     }
 
@@ -156,6 +158,23 @@ class TicketList extends Component{
                             </div>
                         </div>
                         <div className="row">
+                            <div className="col-lg-2 p-3">
+                                <TextField label="Start Date" variant="standard"
+                                           InputLabelProps={{ shrink: true }}
+                                    type="date" value={this.state.startDate}
+                                           onChange={(e)=>{this.setState({startDate:e.target.value})}}
+                                />
+                            </div>
+                            <div className="col-lg-1"> </div>
+                            <div className="col-lg-2 p-3">
+                                <TextField label="End Date" variant="standard"
+                                           type="date" InputLabelProps={{ shrink: true }}
+                                           value={this.state.endDate}
+                                           onChange={(e)=>{this.setState({endDate:e.target.value})}}
+                                />
+                            </div>
+                        </div>
+                        <div className="row">
                             <div className="col-lg-11"> </div>
                             <div className="col-lg-1">
                                 <Button fullWidth onClick={(e)=>{
@@ -191,19 +210,18 @@ class TicketList extends Component{
                             <col style={{border:'1.1px solid #95baa6'}} span={3}/>
                         </colgroup>
                         <thead className= "text-center text-nowrap" style={{background:'#e6f7ee',position:'sticky',top:0,zIndex:1}}>
+                            {/*<tr >*/}
+                            {/*    <th style={{background:'#f5b453'}} colSpan={2}>Ticket Raiser</th>*/}
+                            {/*    <th style={{background:'#889df2'}} colSpan={4}>Ticket Info</th>*/}
+                            {/*    <th style={{background:'#95baa6'}} colSpan={3}>Ticket Resolver</th>*/}
+                            {/*</tr>*/}
                             <tr >
-                                <th style={{background:'#f5b453'}} colSpan={3}>Ticket Raiser</th>
-                                <th style={{background:'#889df2'}} colSpan={4}>Ticket Info</th>
-                                <th style={{background:'#95baa6'}} colSpan={3}>Ticket Resolver</th>
-                            </tr>
-                            <tr >
-                                <th> SL</th><th className="col-lg-2"> Shop</th><th className="col-lg-1"> Machine</th>
+                                <th> SL</th><th className="col-lg-2"> Shop</th>
                                 <th className="col-lg-1"> Ticket</th><th className="col-lg-2"> Current Status</th>
-                                <th >Creation Time</th><th className="col-lg-2">Lead Time</th>
+                                <th >Creation Time</th><th className="col-lg-3">Lead Time</th>
                                 <th className="col-lg-2"> MSO</th>
                             </tr>
                         </thead>
-                        {/*className="col-lg-2"*/}
                         <tbody>
                         {
                             this.state.tickets.map(
@@ -215,9 +233,6 @@ class TicketList extends Component{
                                         <td>{(this.state.currentPage-1)*this.state.pageSize+idx+1}</td>
                                         <td>
                                             { ticket['shopName']+' ('+ticket['shopMisCode']+')'}
-                                        </td>
-                                        <td>
-                                            { ticket['machineBrand']+'-'+ticket['machineModel']+'-'+ticket['machineNumber']}
                                         </td>
                                         <td> { ticket['issueToken']+' ('+ticket['issueType']+')'} </td>
                                         <td> {ticket['currentStatus']['name']}</td>
