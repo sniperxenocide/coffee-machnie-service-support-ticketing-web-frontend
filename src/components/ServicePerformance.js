@@ -114,14 +114,14 @@ class ServicePerformance extends Component {
                                 <div className="row">
                                     <div className="col-lg-6 p-3" >
                                         <TextField label="Hours More Than" variant="standard" fullWidth
-                                                   onChange={(e) =>{
+                                                   type='number' onChange={(e) =>{
                                                        {this.setState({creationToResolveMinStart:e.target.value})}
                                                    } }
                                                    value={this.state.creationToResolveMinStart}/>
                                     </div>
                                     <div className="col-lg-6 p-3">
                                         <TextField label="Hours Less Than" variant="standard" fullWidth
-                                                   onChange={(e) => {
+                                                   type='number' onChange={(e) => {
                                                        {this.setState({creationToResolveMinEnd:e.target.value})}}}
                                                    value={this.state.creationToResolveMinEnd}/>
                                     </div>
@@ -134,14 +134,14 @@ class ServicePerformance extends Component {
                                 <div className="row">
                                     <div className="col-lg-6 p-3" >
                                         <TextField label="Hours More Than" variant="standard" fullWidth
-                                                   onChange={(e) =>{
+                                                   type='number' onChange={(e) =>{
                                                        {this.setState({creationToClosingMinStart:e.target.value})}
                                                    } }
                                                    value={this.state.creationToClosingMinStart}/>
                                     </div>
                                     <div className="col-lg-6 p-3">
                                         <TextField label="Hours Less Than" variant="standard" fullWidth
-                                                   onChange={(e) =>{
+                                                   type='number' onChange={(e) =>{
                                                        {this.setState({creationToClosingMinEnd:e.target.value})}
                                                    } }
                                                    value={this.state.creationToClosingMinEnd}/>
