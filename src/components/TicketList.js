@@ -205,21 +205,21 @@ class TicketList extends Component{
                 <div style={{overflowY:'auto',maxHeight:'550px'}} className = "row" >
                     <table style={{verticalAlign:'middle'}} className = "table table-striped table-bordered">
                         <colgroup>
-                            <col style={{border:'1.1px solid #f5b453'}} span={3}/>
-                            <col style={{border:'1.1px solid #889df2'}} span={3}/>
-                            <col style={{border:'1.1px solid #95baa6'}} span={3}/>
+                            <col style={{border:'1.1px solid black'}} span={7}/>
+                            {/*<col style={{border:'1.1px solid #f5b453'}} span={3}/>*/}
+                            {/*<col style={{border:'1.1px solid #889df2'}} span={3}/>*/}
+                            {/*<col style={{border:'1.1px solid #95baa6'}} span={3}/>*/}
+                            {/*#3eeaf0*/}
                         </colgroup>
                         <thead className= "text-center text-nowrap" style={{background:'#e6f7ee',position:'sticky',top:0,zIndex:1}}>
-                            {/*<tr >*/}
-                            {/*    <th style={{background:'#f5b453'}} colSpan={2}>Ticket Raiser</th>*/}
-                            {/*    <th style={{background:'#889df2'}} colSpan={4}>Ticket Info</th>*/}
-                            {/*    <th style={{background:'#95baa6'}} colSpan={3}>Ticket Resolver</th>*/}
-                            {/*</tr>*/}
                             <tr >
-                                <th> SL</th><th className="col-lg-2"> Shop</th>
-                                <th className="col-lg-1"> Ticket</th><th className="col-lg-2"> Current Status</th>
-                                <th >Creation Time</th><th className="col-lg-3">Lead Time</th>
-                                <th className="col-lg-2"> MSO</th>
+                                <th style={{background:'#f5b453'}}> SL</th>
+                                <th className="col-lg-2" style={{background:'#f5b453'}}> Shop</th>
+                                <th className="col-lg-1" style={{background:'#889df2'}}> Ticket</th>
+                                <th className="col-lg-2" style={{background:'#889df2'}}> Current Status</th>
+                                <th className="col-lg-1" style={{background:'#889df2'}} >Creation Time</th>
+                                <th className="col-lg-3" style={{background:'#889df2'}}>Lead Time</th>
+                                <th className="col-lg-2" style={{background:'#95baa6'}}> MSO</th>
                             </tr>
                         </thead>
                         <tbody>
