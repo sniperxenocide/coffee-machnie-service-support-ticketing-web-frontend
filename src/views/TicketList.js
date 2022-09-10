@@ -1,5 +1,4 @@
 import React,{Component} from "react";
-import Network from "../network";
 import moment from "moment";
 import Pagination from '@mui/material/Pagination';
 import TextField from '@mui/material/TextField';
@@ -9,9 +8,11 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import TicketDetail from "./TicketDetail";
+import TicketDetail from "../components/TicketDetail";
 import Box from "@mui/material/Box";
 import FilterIcon from '@mui/icons-material/FilterList';
+import Network from "../utils/network";
+import CommonMethods from "../utils/CommonMethods";
 
 class TicketList extends Component{
     constructor(props) {
@@ -51,21 +52,6 @@ class TicketList extends Component{
                 statusTagList:[{'statusTag':'%','tagDescription':'All'},...data['data']['statusTagList']]
             })
         })
-    }
-
-    getTimeDif(totalMin,firstLimit,secondLimit){
-        let color='green';
-        if(totalMin===null) return '---'
-        if(totalMin>firstLimit) color='blue';
-        if(totalMin>secondLimit) color='red';
-        let text = '';
-        let d=0,hr=0,min=totalMin;
-        hr=Math.floor(min/60);
-        min=min%60;
-        d=Math.floor(hr/24);
-        hr=hr%24;
-        text = (d>0?d+'d':'')+' '+(hr>0?hr+'h':'')+' '+min+'m';
-        return <b style={{color:color}}>{text}</b>;
     }
 
     handleDialogClose=()=>{
@@ -240,9 +226,9 @@ class TicketList extends Component{
                                             { moment(ticket['issueDate']).format('D-MMM-YYYY h:mm a')}
                                         </td>
                                         <td>
-                                            <div className="row"><label>Response: {this.getTimeDif(ticket['creationToResponseTimeMin'],10,1440)}</label></div>
-                                            <div className="row"><label>Resolution: {this.getTimeDif(ticket['responseToResolutionTimeMin'],720,2880)}</label></div>
-                                            <div className="row"><label>Closing: {this.getTimeDif(ticket['resolutionToClosingTimeMin'],60,1440)}</label></div>
+                                            <div className="row"><label>Response: {CommonMethods.getTimeDif(ticket['creationToResponseTimeMin'],10,1440)}</label></div>
+                                            <div className="row"><label>Resolution: {CommonMethods.getTimeDif(ticket['responseToResolutionTimeMin'],720,2880)}</label></div>
+                                            <div className="row"><label>Closing: {CommonMethods.getTimeDif(ticket['resolutionToClosingTimeMin'],60,1440)}</label></div>
                                         </td>
                                         <td>
                                             { ticket['currentMsoName']+' ('+ticket['currentMsoPhone']+')'}

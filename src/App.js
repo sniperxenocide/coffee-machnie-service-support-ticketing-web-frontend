@@ -2,12 +2,13 @@ import './App.css';
 import React,{ useEffect } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import {BrowserRouter as Router, Route, Routes,useLocation } from 'react-router-dom'
-import TicketList from "./components/TicketList";
+import TicketList from "./views/TicketList";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Login from "./components/Login";
-import Dashboard from "./components/Dashboard";
-import ServicePerformance from "./components/ServicePerformance";
+import Login from "./views/Login";
+import Dashboard from "./views/Dashboard";
+import ServicePerformance from "./report/ServicePerformance";
+import Performance from "./views/Performance";
 
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
                 <Route path = "/login" exact element = {<Login/>}/>
                 <Route path = "/tickets" element = {<TicketList/>}/>
                 <Route path = "/dashboard" element = {<Dashboard/>}/>
-                <Route path = "/performance" element = {<ServicePerformance/>}/>
+                <Route path = "/performance" element = {<Performance/>}/>
             </Routes>
           </div>
           <Footer />

@@ -9,8 +9,9 @@ class Footer extends Component {
     render() {
         return (
             <div className="text-center">
+                <label> </label>
                 <footer className = "footer">
-                    <span className="text-muted">All Rights Reserved@Department of IT-AKG</span>
+                    <span className="text-muted">All Rights Reserved@AKG-IT</span>
                 </footer>
                 <label> </label>
             </div>

@@ -1,5 +1,5 @@
 import React,{Component} from "react";
-import Network from "../network";
+import Network from "../utils/network";
 import moment from "moment";
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';

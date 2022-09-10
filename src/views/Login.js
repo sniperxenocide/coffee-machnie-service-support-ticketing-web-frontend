@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import "./css/Login.css";
-import Network from "../network";
+import "../css/Login.css";
+import Network from "../utils/network";
 
 export default function Login() {
     const [username, setUsername] = useState("");
