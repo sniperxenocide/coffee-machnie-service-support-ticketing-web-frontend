@@ -160,7 +160,10 @@ export default class MachineWiseRootCauseCountReport extends Component{
                     <tbody>
                     {
                         this.state.machineWiseRootCauseCountData.map((row,idx)=>
-                            <tr >
+                            <tr onClick={()=>{
+                                sessionStorage.setItem('machineNumber',row['machineNumber']);
+                                window.location.pathname='/tickets';}}
+                            >
                                 <td>{idx+1}</td>
                                 <td> {row['division']+'>'+row['region']+'>'+row['territory']} </td>
                                 <td> {row['machineBrand']+'-'+row['machineModel']+'-'+row['machineNumber']} </td>

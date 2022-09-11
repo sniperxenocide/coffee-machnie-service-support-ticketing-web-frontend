@@ -4,8 +4,10 @@ import Pagination from "@mui/material/Pagination";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import SearchIcon from "@mui/icons-material/Search";
+import {Link} from "react-router-dom";
+import {withRouter} from "../components/withRouter";
 
-export default class MachineWiseTicketCountReport extends Component{
+class MachineWiseTicketCountReport extends Component{
     constructor(props) {
         super(props);
         this.state={
@@ -41,6 +43,7 @@ export default class MachineWiseTicketCountReport extends Component{
             })
         })
     }
+
 
     render() {
         return <div>
@@ -150,7 +153,11 @@ export default class MachineWiseTicketCountReport extends Component{
                     <tbody>
                     {
                         this.state.machineWiseTicketCountData.map((row,idx)=>
-                            <tr >
+                            <tr onClick={()=>{
+                                sessionStorage.setItem('machineNumber',row['machineNumber']);
+                                window.location.pathname='/tickets';
+                                // this.props.navigate('/tickets',{state:{m:'1'}});
+                            }}>
                                 <td>{idx+1}</td>
                                 <td> {row['division']+'>'+row['region']+'>'+row['territory']} </td>
                                 <td> {row['machineBrand']+'-'+row['machineModel']+'-'+row['machineNumber']} </td>
@@ -165,3 +172,5 @@ export default class MachineWiseTicketCountReport extends Component{
         </div>
     }
 }
+
+export default MachineWiseTicketCountReport;

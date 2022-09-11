@@ -17,14 +17,24 @@ import CommonMethods from "../utils/CommonMethods";
 class TicketList extends Component{
     constructor(props) {
         super(props);
+        let machineNoParam='';
+        let searchBoxVisibleParam=false;
+        try {
+            let m = sessionStorage.getItem('machineNumber');
+            if(m) {
+                machineNoParam=m;
+                searchBoxVisibleParam=true;
+                sessionStorage.removeItem('machineNumber');
+            }
+        }catch (e) {}
         this.state = {
             tickets:[], currentPage:1, totalPages:1, pageSize:10,recordCount:1,
-            shopCode:'', msoPhone:'',ticketNumber:'',machineNumber:'',status:'',
-            startDate:'',endDate:'',
+            shopCode:'', msoPhone:'',ticketNumber:'',machineNumber:machineNoParam,
+            status:'', startDate:'',endDate:'',
             statusList:[{'id':'%','status':'All'}], statusId:'%',
             statusTagList:[{'statusTag':'%','tagDescription':'All'}],statusTag:'%',
             dialogOpen:false,selectedTicketIdx:1,
-            searchBoxVisible:false
+            searchBoxVisible:searchBoxVisibleParam
         }
         this.ticketListApi = '/api/v1/issue/all';
     }
