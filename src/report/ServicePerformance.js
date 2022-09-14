@@ -24,7 +24,7 @@ class ServicePerformance extends Component {
             creationToResolveMinStart:'',creationToResolveMinEnd:'',
             creationToClosingMinStart:'',creationToClosingMinEnd:'',
             tickets:[], currentPage:1, totalPages:1, pageSize:10,recordCount:1,
-            dialogOpen:false,selectedTicketIdx:1
+            dialogOpen:false,selectedTicketIdx:0
         }
     }
 
@@ -85,7 +85,11 @@ class ServicePerformance extends Component {
                     aria-describedby="scroll-dialog-description">
                     <DialogTitle textAlign='center'>Ticket Detail</DialogTitle>
                     <DialogContent dividers={true}>
-                        <TicketDetail ticket={this.state.tickets[this.state.selectedTicketIdx]}/>
+                        {
+                            this.state.tickets.length>0?
+                                <TicketDetail id={this.state.tickets[this.state.selectedTicketIdx].id}/>
+                                :<div> </div>
+                        }
                     </DialogContent>
                     <DialogActions><Button onClick={this.handleDialogClose}>Close</Button></DialogActions>
                 </Dialog>
@@ -203,7 +207,7 @@ class ServicePerformance extends Component {
                                         key={ticket.id}>
                                         <td>{idx+1}</td>
                                         <td>{ticket['issueToken']+' ('+ticket['issueType']+')'}</td>
-                                        <td>{ticket['currentStatus']['name']}</td>
+                                        <td>{ticket['status']}</td>
                                         <td>{ this.getFormattedDate(ticket['issueDate'])}</td>
                                         <td>{ this.getFormattedDate(ticket['responseTime'])}</td>
                                         <td>{ this.getFormattedDate(ticket['resolutionTime'])}</td>

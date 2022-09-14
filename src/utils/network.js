@@ -1,5 +1,7 @@
 import axios from 'axios';
-const http = axios.create({baseURL: 'http://localhost:1212'});
+// const baseUrl = 'http://localhost:1212';         // Local Server
+const baseUrl = 'http://10.10.50.252:1212';   // Remote Server
+const http = axios.create({baseURL: baseUrl});
 
 class Network{
 
@@ -16,6 +18,7 @@ class Network{
         if(api.toString()==='/authenticate') return null;
         const user = JSON.parse(sessionStorage.getItem('user'));
         if (user && user.token) return { Authorization: 'Bearer ' + user.token };
+        alert('Unauthorized or Session Expired');
         window.location.pathname = '/' ;
     }
 
@@ -42,8 +45,10 @@ class Network{
     onError(error){
         this.hideLoader();
         console.log(error);
-        if(error.response.data['error'].toString()==='Unauthorized')
-            window.location.pathname = '/' ;
+        if(error.response.data['error'].toString()==='Unauthorized') {
+            alert('Unauthorized Access');
+            window.location.pathname = '/';
+        }
         else alert(error.toString());
         return false
     }

@@ -11,15 +11,10 @@ import AlertTitle from '@mui/material/AlertTitle';
 class TicketDetail extends Component {
     constructor(props) {
         super(props);
-        let nextStatusList = props.ticket['nextStatusList'];
+        this.ticketDetailApi = '/api/v1/issue/detail?id='+props.id;
         this.state={
-            ticket:props.ticket,
-            nextStatusIndex:0,
-            dataFields:nextStatusList.length>0?nextStatusList[0]['dataFields']:[],
-            nextStatusId:nextStatusList.length>0?nextStatusList[0].id:-1,
-            dataList:nextStatusList.length>0?nextStatusList[0]['dataFields'].map(
-                df=>{return {'fieldId':df['id'],'fieldData':''}}
-            ):[],
+            ticket:null, nextStatusIndex:0,
+            dataFields:[], nextStatusId:-1, dataList:[],
             alert:{
                 severity:'success',
                 show:false,
@@ -28,8 +23,20 @@ class TicketDetail extends Component {
             },
             submitButtonDisabled:false
         }
-        console.log('Initial State: ');
-        console.log(this.state);
+    }
+
+    componentDidMount() {
+        Network.get(this.ticketDetailApi).then(res=>{
+            let ticket = res['data'];
+            this.setState({
+                ticket:ticket,
+                dataFields:ticket['nextStatusList'].length>0?ticket['nextStatusList'][0]['dataFields']:[],
+                nextStatusId:ticket['nextStatusList'].length>0?ticket['nextStatusList'][0]['id']:-1,
+                dataList:ticket['nextStatusList'].length>0?ticket['nextStatusList'][0]['dataFields'].map(
+                    df=>{return {'fieldId':df['id'],'fieldData':''}}
+                ):[],
+            })
+        })
     }
 
     showAlertMsg=(status,msg,redirect=false)=>{
@@ -89,7 +96,7 @@ class TicketDetail extends Component {
         return(
           <div>
               {
-                  ticket['nextStatusList'].length>0?
+                  (ticket!==null && ticket['nextStatusList'].length>0)?
                       <Box sx={{ border:'1px solid grey',borderRadius:'5px',margin:'10px 0px',padding:'10px' }}><div>
                           {
                               this.state.alert.show?
@@ -162,65 +169,69 @@ class TicketDetail extends Component {
                           </tr>
                       </thead>
                       <tbody>
-                          <tr>
-                              <td>
-                                  <div className="row">
-                                      <div className="col-lg-3"><label><b>Name:</b></label> </div>
-                                      <div className="col-lg-9"><label>{ticket['shopName']}</label> </div>
-                                  </div>
-                                  <div className="row">
-                                      <div className="col-lg-3"><label><b>MIS Code:</b></label> </div>
-                                      <div className="col-lg-9"><label>{ticket['shopMisCode']}</label> </div>
-                                  </div>
-                                  <div className="row">
-                                      <div className="col-lg-3"><label><b>Owner:</b></label> </div>
-                                      <div className="col-lg-9"><label>{ticket['shopOwner']}</label> </div>
-                                  </div>
-                                  <div className="row">
-                                      <div className="col-lg-3"><label><b>Phone:</b></label> </div>
-                                      <div className="col-lg-9"><label>{ticket['shopPhone']}</label> </div>
-                                  </div>
-                                  <div className="row">
-                                      <div className="col-lg-3"><label><b>Division:</b></label> </div>
-                                      <div className="col-lg-9"><label>{ticket['division']}</label> </div>
-                                  </div>
-                                  <div className="row">
-                                      <div className="col-lg-3"><label><b>Region:</b></label> </div>
-                                      <div className="col-lg-9"><label>{ticket['region']}</label> </div>
-                                  </div>
-                                  <div className="row">
-                                      <div className="col-lg-3"><label><b>Territory:</b></label> </div>
-                                      <div className="col-lg-9"><label>{ticket['territory']}</label> </div>
-                                  </div>
-                                  <div className="row">
-                                      <div className="col-lg-3"><label><b>Address:</b></label> </div>
-                                      <div className="col-lg-9"><label>{ticket['shopAddress']}</label> </div>
-                                  </div>
-                              </td>
-                              <td>
-                                  <div className="row"><label><b>Brand: </b>{ticket['machineBrand']}</label></div>
-                                  <div className="row"><label><b>Model: </b>{ticket['machineModel']}</label></div>
-                                  <div className="row"><label><b>Serial: </b>{ticket['machineNumber']}</label></div>
-                              </td>
-                              <td className="text-nowrap">
-                                  <div className="row"><label><b>Ticket Number:</b></label></div>
-                                  <div className="row"><label>{ ticket['issueToken']+' ('+ticket['issueType']+')'}</label></div>
-                                  <div className="row"><label><b>Current Status:</b></label></div>
-                                  <div className="row"><label>{ ticket['currentStatus']['name']}</label></div>
-                                  <div className="row"><label><b>Creation Time:</b></label></div>
-                                  <div className="row"><label>{ moment(ticket['issueDate']).format('D-MMM-YYYY h:mm a')}</label></div>
-                                  <div className="row"><label><b>Response Time:</b></label></div>
-                                  <div className="row"><label>{ ticket['responseTime']==null?'---':moment(ticket['responseTime']).format('D-MMM-YYYY h:mm a')}</label></div>
-                                  <div className="row"><label><b>Resolution Time:</b></label></div>
-                                  <div className="row"><label>{ ticket['resolutionTime']==null?'---': moment(ticket['resolutionTime']).format('D-MMM-YYYY h:mm a')}</label></div>
-                                  <div className="row"><label><b>Closing Time:</b></label></div>
-                                  <div className="row"><label>{ ticket['closingTime']==null?'---': moment(ticket['closingTime']).format('D-MMM-YYYY h:mm a')}</label></div>
-                              </td>
-                              <td>
-                                  <div className="row"><label><b>Name: </b>{ ticket['currentMsoName']}</label></div>
-                                  <div className="row"><label><b>Phone: </b>{ ticket['currentMsoPhone']}</label></div>
-                              </td>
-                          </tr>
+                      {
+                          ticket==null?<tr><td> </td></tr>:
+                              <tr>
+                                  <td>
+                                      <div className="row">
+                                          <div className="col-lg-3"><label><b>Name:</b></label> </div>
+                                          <div className="col-lg-9"><label>{ticket['shopName']}</label> </div>
+                                      </div>
+                                      <div className="row">
+                                          <div className="col-lg-3"><label><b>MIS Code:</b></label> </div>
+                                          <div className="col-lg-9"><label>{ticket['shopMisCode']}</label> </div>
+                                      </div>
+                                      <div className="row">
+                                          <div className="col-lg-3"><label><b>Owner:</b></label> </div>
+                                          <div className="col-lg-9"><label>{ticket['shopOwner']}</label> </div>
+                                      </div>
+                                      <div className="row">
+                                          <div className="col-lg-3"><label><b>Phone:</b></label> </div>
+                                          <div className="col-lg-9"><label>{ticket['shopPhone']}</label> </div>
+                                      </div>
+                                      <div className="row">
+                                          <div className="col-lg-3"><label><b>Division:</b></label> </div>
+                                          <div className="col-lg-9"><label>{ticket['division']}</label> </div>
+                                      </div>
+                                      <div className="row">
+                                          <div className="col-lg-3"><label><b>Region:</b></label> </div>
+                                          <div className="col-lg-9"><label>{ticket['region']}</label> </div>
+                                      </div>
+                                      <div className="row">
+                                          <div className="col-lg-3"><label><b>Territory:</b></label> </div>
+                                          <div className="col-lg-9"><label>{ticket['territory']}</label> </div>
+                                      </div>
+                                      <div className="row">
+                                          <div className="col-lg-3"><label><b>Address:</b></label> </div>
+                                          <div className="col-lg-9"><label>{ticket['shopAddress']}</label> </div>
+                                      </div>
+                                  </td>
+                                  <td>
+                                      <div className="row"><label><b>Brand: </b>{ticket['machineBrand']}</label></div>
+                                      <div className="row"><label><b>Model: </b>{ticket['machineModel']}</label></div>
+                                      <div className="row"><label><b>Serial: </b>{ticket['machineNumber']}</label></div>
+                                  </td>
+                                  <td className="text-nowrap">
+                                      <div className="row"><label><b>Ticket Number:</b></label></div>
+                                      <div className="row"><label>{ ticket['issueToken']+' ('+ticket['issueType']+')'}</label></div>
+                                      <div className="row"><label><b>Current Status:</b></label></div>
+                                      <div className="row"><label>{ ticket['currentStatus']['name']}</label></div>
+                                      <div className="row"><label><b>Creation Time:</b></label></div>
+                                      <div className="row"><label>{ moment(ticket['issueDate']).format('D-MMM-YYYY h:mm a')}</label></div>
+                                      <div className="row"><label><b>Response Time:</b></label></div>
+                                      <div className="row"><label>{ ticket['responseTime']==null?'---':moment(ticket['responseTime']).format('D-MMM-YYYY h:mm a')}</label></div>
+                                      <div className="row"><label><b>Resolution Time:</b></label></div>
+                                      <div className="row"><label>{ ticket['resolutionTime']==null?'---': moment(ticket['resolutionTime']).format('D-MMM-YYYY h:mm a')}</label></div>
+                                      <div className="row"><label><b>Closing Time:</b></label></div>
+                                      <div className="row"><label>{ ticket['closingTime']==null?'---': moment(ticket['closingTime']).format('D-MMM-YYYY h:mm a')}</label></div>
+                                  </td>
+                                  <td>
+                                      <div className="row"><label><b>Name: </b>{ ticket['currentMsoName']}</label></div>
+                                      <div className="row"><label><b>Phone: </b>{ ticket['currentMsoPhone']}</label></div>
+                                  </td>
+                              </tr>
+                      }
+
                       </tbody>
                   </table>
               </div>
@@ -239,7 +250,8 @@ class TicketDetail extends Component {
                       </thead>
                       <tbody>
                       {
-                          ticket['issueHistory'].map(
+                          ticket==null?<tr><td> </td></tr>:
+                              ticket['issueHistory'].map(
                               (th)=>
                                   <tr key={th.sequence}>
                                       <td>{th['sequence']}</td>

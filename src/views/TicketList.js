@@ -33,7 +33,7 @@ class TicketList extends Component{
             status:'', startDate:'',endDate:'',
             statusList:[{'id':'%','status':'All'}], statusId:'%',
             statusTagList:[{'statusTag':'%','tagDescription':'All'}],statusTag:'%',
-            dialogOpen:false,selectedTicketIdx:1,
+            dialogOpen:false,selectedTicketIdx:0,
             searchBoxVisible:searchBoxVisibleParam
         }
         this.ticketListApi = '/api/v1/issue/all';
@@ -79,7 +79,11 @@ class TicketList extends Component{
                     aria-describedby="scroll-dialog-description">
                     <DialogTitle textAlign='center'>Ticket Detail</DialogTitle>
                     <DialogContent dividers={true}>
-                        <TicketDetail ticket={this.state.tickets[this.state.selectedTicketIdx]}/>
+                        {
+                            this.state.tickets.length>0?
+                            <TicketDetail id={this.state.tickets[this.state.selectedTicketIdx].id}/>
+                                :<div> </div>
+                        }
                     </DialogContent>
                     <DialogActions><Button onClick={this.handleDialogClose}>Close</Button></DialogActions>
                 </Dialog>
@@ -231,7 +235,7 @@ class TicketList extends Component{
                                             { ticket['shopName']+' ('+ticket['shopMisCode']+')'}
                                         </td>
                                         <td> { ticket['issueToken']+' ('+ticket['issueType']+')'} </td>
-                                        <td> {ticket['currentStatus']['name']}</td>
+                                        <td> {ticket['status']}</td>
                                         <td>
                                             { moment(ticket['issueDate']).format('D-MMM-YYYY h:mm a')}
                                         </td>
